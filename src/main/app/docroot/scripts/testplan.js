@@ -49,24 +49,10 @@ function init(){
 		onCreateLabel: function(label, node){
 			label.id = node.id;            
 
-			//set label styles
-			var style = label.style;
-
-			style.height= '40px';  
-			style.width= '95px';
-			style.cursor = 'pointer';
-			style.color = '#333';
-			style.fontSize = '0.8em';
-			//style.textAlign= 'center';
-			style.paddingTop = '3px';
-
-
-			//Add Test Plan data to Nodes
-			var nodeHTML = '';
-
-			nodeHTML += '<div class="stepName">' + node.data.stepName + '</div>';
-			nodeHTML += '<div class="Summary">' + node.data.stepSummary + '</div>';
-			label.innerHTML = nodeHTML;
+			$(label).addClass('node');
+			$(label).append( $('<div class="stepName">' + node.data.stepName + '</div>') );
+			$(label).append( $('<div class="Summary">' + node.data.stepSummary + '</div>') );
+			
 			if(node.selected){
 				$(label).append(buttons);
 			}
@@ -80,6 +66,8 @@ function init(){
 				$("div.buttons img#add").on('click',function() { addNode(node) });
 				$("div.buttons img#remove").on('click',function() { removeNode(node) });
 				
+				$(label).off('dblclick');
+				$(label).on('dblclick', function(){showDetails(label, node) });
 				
 				var m ={
 						offsetX: st.canvas.translateOffsetX,
@@ -204,6 +192,80 @@ function save(){
         success: function(result) {
         	console.log(result);
         }
-});
+	}	);
+	
+
+	
+}
+
+
+
+function showDetails(label, node){
+	//Get the screen height and width
+	var maskHeight = $(document).height();
+	var maskWidth = $(window).width();
+	
+	
+	
+	var divContainer = $("<div id='detailsContainer' class='window'></div>");
+	var divDetails = $("<div class='details' ></div>");
+	var divButtons = $("<div class='buttons' ></div>");
+	
+	divDetails.append($("<label for='lblStepname'>Step Name</label><input id='stepName' type='text' value='" + node.data.stepName + "'></div><br>"));
+	divDetails.append($("<label for='lblStepname'>Step Summary</label><input id='stepSummary' type='text' value='" + node.data.stepSummary + "'></div><br>"));
+	divButtons.append($("<input type='button' value='save'/>").on('click', function(){saveDetails(label, node);} ));
+	divButtons.append($("<input type='button' value='cancel'/>").on('click', function(){ $("#mask").remove(); $('#detailsContainer').remove(); }) );
+	
+	divContainer.append(divDetails);
+	divContainer.append(divButtons);
+	$('body').append("<div id='mask'></div>")
+	$('body').append(divContainer);
+	
+	
+	
+	//Set height and width to mask to fill up the whole screen
+    $('#mask').css({'width':maskWidth,'height':maskHeight});
+    $('#mask').css({'top':0,'left':0});
+     
+    //transition effect    
+    $('#mask').fadeIn(1000);   
+    $('#mask').fadeTo("slow",0.8);  
+
+	//Get the window height and width
+	var winH = $(window).height();
+	var winW = $(window).width();
+	       
+	//Set the popup window to center
+	$("#detailsContainer").css('top',  winH/2-$("#detailsContainer").height()/2);
+	$("#detailsContainer").css('left', winW/2-$("#detailsContainer").width()/2);
+
+	//transition effect
+	$("#detailsContainer").fadeIn(2000); 
+	
+}
+
+function saveDetails(label, node){
+	updateNodeData(node.id, json);
+	
+	st.loadJSON(json);
+	st.compute();
+	
+	st.onClick(node.id);
+	$("#mask").remove(); 
+	$('#detailsContainer').remove();
+}
+
+function updateNodeData(id, p_json){
+	
+	if(p_json.id == id){
+		
+		p_json.data = {"stepName": $("input#stepName")[0].value, "stepSummary": $("input#stepSummary")[0].value};
+		
+	}else{
+		if( p_json.children != null){
+			p_json.children.forEach( function(node){ updateNodeData(id, node) } );
+		}
+	}
+	
 	
 }

@@ -1,3 +1,39 @@
 .active-node{
 	 color: red;
 }
+
+.node{
+	height: 40px;  
+	width: 95px;
+	cursor: pointer;
+	color:#333;
+	fontSize: 0.8em;
+	paddingTop: 3px;
+}
+
+#detailsContainer{
+	position:fixed;
+  width:375px;
+  height:203px;
+  display:none;
+  z-index:9999;
+  padding:20px;
+}
+
+#detailsContainer div.details{
+	
+}
+
+#detailsContainer div.buttons{
+}
+
+#mask {
+  position:absolute;
+  z-index:9000;
+  background-color:#000;
+  display:none;
+}
+
+#detailsContainer label{
+	color: white;
+}
