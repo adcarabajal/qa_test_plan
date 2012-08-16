@@ -1,271 +1,284 @@
-var labelType, useGradients, nativeTextSupport, animate;
-var json, st;
-(function() {
-	var ua = navigator.userAgent,
-	iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
-	typeOfCanvas = typeof HTMLCanvasElement,
-	nativeCanvasSupport = (typeOfCanvas == 'object' || typeOfCanvas == 'function'),
-	textSupport = nativeCanvasSupport 
-	&& (typeof document.createElement('canvas').getContext('2d').fillText == 'function');
-	//I'm setting this based on the fact that ExCanvas provides text support for IE
-	//and that as of today iPhone/iPad current text support is lame
-	labelType = (!nativeCanvasSupport || (textSupport && !iStuff))? 'Native' : 'HTML';
-	nativeTextSupport = labelType == 'Native';
-	useGradients = nativeCanvasSupport;
-	animate = !(iStuff || !nativeCanvasSupport);
-})();
+/*
+ * complex.html
+ *
+ * This is a demonstration page for the jQuery layout widget
+ *
+ *	NOTE: For best code readability, view this with a fixed-space font and tabs equal to 4-chars
+ */
 
-var buttons = $('<div class="buttons"></div>');
-$('<img id="add" src="images/add.png" class="btn btn-small add" >').on('click',function() { addNode(node) }).appendTo(buttons);
-$('<img id="remove" src="images/remove.png" class="btn btn-small delete" />').on('click', function(){ removeNode(node) } ).appendTo(buttons);
+	var outerLayout, innerLayout;
 
-function init(){
-	st = new $jit.ST({
-		injectInto: 'infovis',
-		duration: 200,	
-		transition: $jit.Trans.Quart.easeInOut,
-		//set distance between node and its children
-		levelDistance: 50,
-		orientation:'top',
+	/*
+	*#######################
+	*     ON PAGE LOAD
+	*#######################
+	*/
+	$(document).ready( function() {
+		// create the OUTER LAYOUT
+		outerLayout = $("body").layout( layoutSettings_Outer );
+		resizeCenterContainer()
+		/*******************************
+		 ***  CUSTOM LAYOUT BUTTONS  ***
+		 *******************************
+		 *
+		 * Add SPANs to the east/west panes for customer "close" and "pin" buttons
+		 *
+		 * COULD have hard-coded span, div, button, image, or any element to use as a 'button'...
+		 * ... but instead am adding SPANs via script - THEN attaching the layout-events to them
+		 *
+		 * CSS will size and position the spans, as well as set the background-images
+		 */
 
-		//enable panning
-		Navigation: {
-			enable:true,
-			panning:true
-		},
+		// BIND events to hard-coded buttons in the NORTH toolbar
+//		outerLayout.addToggleBtn( "#tbarToggleNorth", "north" );
+//		outerLayout.addOpenBtn( "#tbarOpenSouth", "south" );
+//		outerLayout.addCloseBtn( "#tbarCloseSouth", "south" );
+//		outerLayout.addPinBtn( "#tbarPinWest", "west" );
+//		outerLayout.addPinBtn( "#tbarPinEast", "east" );
 
-		Node: {
-			height: 40,  
-			width: 95,
-			type: 'rectangle',
-			overridable: true
-		},
+		// save selector strings to vars so we don't have to repeat it
+		// must prefix paneClass with "body > " to target ONLY the outerLayout panes
+		var westSelector = "body > .ui-layout-west"; // outer-west pane
+		var eastSelector = "body > .ui-layout-east"; // outer-east pane
 
-		Edge: {
-			type: 'bezier',
-			overridable: true
-		},
+		 // CREATE SPANs for pin-buttons - using a generic class as identifiers
+		$("<span></span>").addClass("pin-button").prependTo( westSelector );
+		$("<span></span>").addClass("pin-button").prependTo( eastSelector );
+		// BIND events to pin-buttons to make them functional
+		outerLayout.addPinBtn( westSelector +" .pin-button", "west");
+		outerLayout.addPinBtn( eastSelector +" .pin-button", "east" );
 
-		onCreateLabel: function(label, node){
-			label.id = node.id;            
-
-			$(label).addClass('node');
-			$(label).append( $('<div class="stepName">' + node.data.stepName + '</div>') );
-			$(label).append( $('<div class="Summary">' + node.data.stepSummary + '</div>') );
-			
-			if(node.selected){
-				$(label).append(buttons);
-			}
-			
-			label.onclick = function(){
-				$(label).siblings().removeClass('active-node');
-				$(label).addClass('active-node'); 
-				$("div.buttons").appendTo($(label));
-				$("div.buttons img#add").off('click');
-				$("div.buttons img#remove").off('click');
-				$("div.buttons img#add").on('click',function() { addNode(node) });
-				$("div.buttons img#remove").on('click',function() { removeNode(node) });
-				
-				$(label).off('dblclick');
-				$(label).on('dblclick', function(){showDetails(label, node) });
-				
-				var m ={
-						offsetX: st.canvas.translateOffsetX,
-						offsetY: st.canvas.translateOffsetY
-				};
-
-				st.onClick(node.id, { Move: m }); 
-			}; 
-			/////
-		},
+		 // CREATE SPANs for close-buttons - using unique IDs as identifiers
+		$("<span></span>").attr("id", "west-closer" ).prependTo( westSelector );
+		$("<span></span>").attr("id", "east-closer").prependTo( eastSelector );
+		// BIND layout events to close-buttons to make them functional
+		outerLayout.addCloseBtn("#west-closer", "west");
+		outerLayout.addCloseBtn("#east-closer", "east");
 
 
-		onBeforePlotNode: function(node){
-			node.data.$color=  "#ccc";
-			if(node.selected){
-				node.data.$color = "#cc9";
+		/* Create the INNER LAYOUT - nested inside the 'center pane' of the outer layout
+		 * Inner Layout is create by createInnerLayout() function - on demand
+		 *
+			innerLayout = $("div.pane-center").layout( layoutSettings_Inner );
+		 *
+		 */
 
-			}
-		},
 
-		onBeforePlotLine: function(adj){
-			if (adj.nodeFrom.selected && adj.nodeTo.selected) {
-				adj.data.$color = "#eed";
-				adj.data.$lineWidth = 3;
-			}
-			else {
-				delete adj.data.$color;
-				delete adj.data.$lineWidth;
-			}
-		}
+		// DEMO HELPER: prevent hyperlinks from reloading page when a 'base.href' is set
+		$("a").each(function () {
+			var path = document.location.href;
+			if (path.substr(path.length-1)=="#") path = path.substr(0,path.length-1);
+			if (this.href.substr(this.href.length-1) == "#") this.href = path +"#";
+		});
+
 	});
 
 
+	/*
 
-	$.getJSON("/api/db/1", function(p_json){
-		json = p_json[0];
-		computeTree();
-	});    
-}
-
-function computeTree(){
-	st.loadJSON(json);
-	st.compute();
-	st.geom.translate(new $jit.Complex(-200, 0), "current");
-	st.onClick(st.root);
-}
-
-function addNode(node){
-	
-	addNodeToJson(node.id, json);
-		
-	st.loadJSON(json);
-	st.compute();
-	
-	st.onClick(node.id);
-}
-
-function addNodeToJson(id, p_json){
-	
-	if(p_json.id == id){
-		if( p_json.children != null){
-			
-			p_json.children.push({ "id" : id + "-" + p_json.children.length, "name" : "nodo nuevo" , "data" : { "stepName" : "nodoNuevo" , "stepSummary" : "summar nuevo"} , "children" :  null });
-		}else{
-			p_json.children = [{ "id" : id + "-1" , "name" : "nodo nuevo" , "data" : { "stepName" : "nodoNuevo" , "stepSummary" : "summar nuevo"} , "children" :  null }];
-		}
-	}else{
-		if( p_json.children != null){
-			p_json.children.forEach( function(node){ addNodeToJson(id, node) } );
-		}
+	*#######################
+	* OUTER LAYOUT SETTINGS
+	*#######################
+	*
+	* This configuration illustrates how extensively the layout can be customized
+	* ALL SETTINGS ARE OPTIONAL - and there are more available than shown below
+	*
+	* These settings are set in 'sub-key format' - ALL data must be in a nested data-structures
+	* All default settings (applied to all panes) go inside the defaults:{} key
+	* Pane-specific settings go inside their keys: north:{}, south:{}, center:{}, etc
+	*/
+	var layoutSettings_Outer = {
+		name: "outerLayout" // NO FUNCTIONAL USE, but could be used by custom code to 'identify' a layout
+		// options.defaults apply to ALL PANES - but overridden by pane-specific settings
+	,	defaults: {
+			size:					"auto"
+		,	minSize:				50
+		,	paneClass:				"pane" 		// default = 'ui-layout-pane'
+		,	resizerClass:			"resizer"	// default = 'ui-layout-resizer'
+		,	togglerClass:			"toggler"	// default = 'ui-layout-toggler'
+		,	buttonClass:			"button"	// default = 'ui-layout-button'
+		,	contentSelector:		".content"	// inner div to auto-size so only it scrolls, not the entire pane!
+		,	contentIgnoreSelector:	"span"		// 'paneSelector' for content to 'ignore' when measuring room for content
+		,	togglerLength_open:		35			// WIDTH of toggler on north/south edges - HEIGHT on east/west edges
+		,	togglerLength_closed:	35			// "100%" OR -1 = full height
+		,	hideTogglerOnSlide:		true		// hide the toggler when pane is 'slid open'
+		,	togglerTip_open:		"Close This Pane"
+		,	togglerTip_closed:		"Open This Pane"
+		,	resizerTip:				"Resize This Pane"
+		//	effect defaults - overridden on some panes
+		,	fxName:					"slide"		// none, slide, drop, scale
+		,	fxSpeed_open:			400
+		,	fxSpeed_close:			400
+		,	fxSettings_open:		{ easing: "easeInQuint" }
+		,	fxSettings_close:		{ easing: "easeOutQuint" }
 	}
-	
-	
+	,	north: {
+			spacing_open:			1			// cosmetic spacing
+		,	togglerLength_open:		0			// HIDE the toggler button
+		,	togglerLength_closed:	-1			// "100%" OR -1 = full width of pane
+		,	resizable: 				false
+		,	slidable:				false
+		,	initClosed:				false
+		//	override default effect
+		,	fxName:					"none"
+		}
+	,	south: {
+			maxSize:				200
+		,	spacing_closed:			0			// HIDE resizer & toggler when 'closed'
+		,	slidable:				false		// REFERENCE - cannot slide if spacing_closed = 0
+		,	initClosed:				true
+		//	CALLBACK TESTING...
+		,	onhide_start:			function () {  }
+		,	onhide_end:				function () {  }
+		,	onshow_start:			function () {  }
+		,	onshow_end:				function () {  }
+		,	onopen_start:			function () {  }
+		,	onopen_end:				function () {  }
+		,	onclose_start:			function () {  }
+		,	onclose_end:			function () {  }
+		//,	onresize_start:			function () { return confirm("START South pane resize \n\n onresize_start callback \n\n Allow pane to be resized?)"); }
+		,	onresize_end:			function () { resizeCenterContainer() }
+		}
+	,	west: {
+			size:					250
+		,	spacing_closed:			21			// wider space when closed
+		,	togglerLength_closed:	21			// make toggler 'square' - 21x21
+		,	togglerAlign_closed:	"top"		// align to top of resizer
+		,	togglerLength_open:		0			// NONE - using custom togglers INSIDE west-pane
+		,	togglerTip_open:		"Close West Pane"
+		,	togglerTip_closed:		"Open West Pane"
+		,	resizerTip_open:		"Resize West Pane"
+		,	slideTrigger_open:		"click" 	// default
+		,	initClosed:				false
+		//	add 'bounce' option to default 'slide' effect
+//		,	fxSettings_open:		{ easing: "easeOutBounce" }
+		,	fxName:					"drop"
+		,	fxSpeed:				"normal"
+		,	fxSettings_open:		{ easing: "" }
+		}
+	,	east: {
+			size:					321
+		,	minSize:				321
+		,	spacing_closed:			21			// wider space when closed
+		,	togglerLength_closed:	21			// make toggler 'square' - 21x21
+		,	togglerAlign_closed:	"top"		// align to top of resizer
+		,	togglerLength_open:		0 			// NONE - using custom togglers INSIDE east-pane
+		,	togglerTip_open:		"Close East Pane"
+		,	togglerTip_closed:		"Open East Pane"
+		,	resizerTip_open:		"Resize East Pane"
+		,	slideTrigger_open:		"mouseover"
+		,	initClosed:				false
+		//	override default effect, speed, and settings
+		,	fxName:					"drop"
+		,	fxSpeed:				"normal"
+		,	fxSettings:				{ easing: "" } // nullify default easing
+		}
+	,	center: {
+			paneSelector:			"#mainContent" 			// sample: use an ID to select pane instead of a class
+		,	minWidth:				200
+		,	minHeight:				200
+		,   onresize_end:			function () { resizeCenterContainer() }
+		}
+	};
+
+
+
+
+
+
+
+
+
+
+function resizeCenterContainer(){
+	$( ".ui-layout-content" ).css("height",$(".ui-layout-center").height() - 10 -$(".ui-layout-center .footer").outerHeight()*2)
 }
 
-function removeNode(node){
-	
-	var parentId = $jit.Graph.Util.getParents(node)[0].id;
-	removeNodefromJson(node.id, json);
-	
-	st.loadJSON(json);
-	st.compute();
-	st.onClick(parentId);
-}
-
-function removeNodefromJson(id, p_json){
-	
-	for(var i=0; i < p_json.children.length; i++){
-		if(p_json.children[i].id == id)
-		{
-			p_json.children.pop(i);
-			return;
-		}else{
-			if(p_json.children[i].children !=null){
-				removeNodefromJson(id, p_json.children[i]);
+var stepSortable = {
+		_thisHTML: function(){
+			return $( ".column" )
+		},
+		create: function(){ 
+			stepSortable._thisHTML()
+			.sortable({
+				connectWith: ".column",
+				axis: 'y'
+			});
+			
+			stepSortable._thisHTML().disableSelection();
+		},
+		destroy: function(){
+			stepSortable._thisHTML().sortable("destroy");
+		},
+		addStepToUI: function(stepToAdd){
+			stepSortable._thisHTML().append(stepToAdd);
+			stepSortable.destroy();
+			stepSortable.bindEvents();
+			stepSortable.create();
+		},
+		addStep: function(title,content,id){
+			var steps = '';
+			if(typeof title == "undefined"){
+				steps = '<div class="portlet ui-widget ui-widget-content ui-helper-clearfix ui-corner-all"><div class="portlet-header ui-widget-header ui-corner-all"><span class="ui-icon ui-icon-plusthick"></span>' + $("#stepTitle").val()  + '</div><div class="portlet-content"style="display:none;">' + $("#stepText").val()  + '</div></div>';
+			}else{
+				steps = '<div class="portlet ui-widget ui-widget-content ui-helper-clearfix ui-corner-all"><div class="portlet-header ui-widget-header ui-corner-all"><span class="ui-icon ui-icon-plusthick"></span>' + title  + '</div><div class="portlet-content"style="display:none;">' + content  + '</div></div>';
+			}
+			stepSortable.addStepToUI(steps)
+		},
+		delStep: function(){
+			$('.stepSelected').remove()
+			stepSortable.destroy();
+			stepSortable.bindEvents();
+			stepSortable.create();
+		},
+		cloneStep: function(){
+			var httpCodeClone = $('.stepSelected').clone();
+			stepSortable.addStepToUI(httpCodeClone)
+		}
+		,
+		bindEvents: function(){
+			$('.portlet-header').unbind('click')
+			$('.portlet-header').click(function(event) {
+				if (event.shiftKey) {
+					event.preventDefault();
+					$(this).parents('.portlet').toggleClass("stepSelected");
+				}else{
+					$("#stepTitle").val($(this).text())
+					$("#stepText").val($(this).parent().find('.portlet-content').text())
+				}
+			});
+			$( ".portlet-header .ui-icon" ).unbind('click')
+			$( ".portlet-header .ui-icon" ).click(function() {
+					$( this ).toggleClass( "ui-icon-minusthick" ).toggleClass( "ui-icon-plusthick" );
+					$( this ).parents( ".portlet:first" ).find( ".portlet-content" ).toggle();
+			});
+		},
+		loadFromDB:function(tcId){
+			var responseMock = "";
+			for(i=0;i<10;i++){
+				stepSortable.addStep("titulo", "contenido", "id")
 			}
 		}
-	}
-}
+};
 
-function findNode(p_id, p_json){
-	
-	$.each(p_json.id, function(i, v) {
+var stepSortableControls = {
 		
-        if (v == p_id) {
-        	alert(i);
-            return v;
-        }else{
-        	findNode(p_id, p_json.children)
-        }
-    });
-}
-
-function save(){
-	console.log(json)
-	$.ajax({
-        url: '/api/db/1',
-        type: "PUT",
-        data: JSON.stringify(json),
-        dataType: "json",
-        contentType:"application/json; charset=utf-8",
-        success: function(result) {
-        	console.log(result);
-        }
-	}	);
-	
-
-	
-}
-
-
-
-function showDetails(label, node){
-	//Get the screen height and width
-	var maskHeight = $(document).height();
-	var maskWidth = $(window).width();
-	
-	
-	
-	var divContainer = $("<div id='detailsContainer' class='window'></div>");
-	var divDetails = $("<div class='details' ></div>");
-	var divButtons = $("<div class='buttons' ></div>");
-	
-	divDetails.append($("<label for='lblStepname'>Step Name</label><input id='stepName' type='text' value='" + node.data.stepName + "'></div><br>"));
-	divDetails.append($("<label for='lblStepname'>Step Summary</label><input id='stepSummary' type='text' value='" + node.data.stepSummary + "'></div><br>"));
-	divButtons.append($("<input type='button' value='save'/>").on('click', function(){saveDetails(label, node);} ));
-	divButtons.append($("<input type='button' value='cancel'/>").on('click', function(){ $("#mask").remove(); $('#detailsContainer').remove(); }) );
-	
-	divContainer.append(divDetails);
-	divContainer.append(divButtons);
-	$('body').append("<div id='mask'></div>")
-	$('body').append(divContainer);
-	
-	
-	
-	//Set height and width to mask to fill up the whole screen
-    $('#mask').css({'width':maskWidth,'height':maskHeight});
-    $('#mask').css({'top':0,'left':0});
-     
-    //transition effect    
-    $('#mask').fadeIn(1000);   
-    $('#mask').fadeTo("slow",0.8);  
-
-	//Get the window height and width
-	var winH = $(window).height();
-	var winW = $(window).width();
-	       
-	//Set the popup window to center
-	$("#detailsContainer").css('top',  winH/2-$("#detailsContainer").height()/2);
-	$("#detailsContainer").css('left', winW/2-$("#detailsContainer").width()/2);
-
-	//transition effect
-	$("#detailsContainer").fadeIn(2000); 
-	
-}
-
-function saveDetails(label, node){
-	updateNodeData(node.id, json);
-	
-	st.loadJSON(json);
-	st.compute();
-	
-	st.onClick(node.id);
-	$("#mask").remove(); 
-	$('#detailsContainer').remove();
-}
-
-function updateNodeData(id, p_json){
-	
-	if(p_json.id == id){
+		expandAll: function(){
+			$( ".portlet-header .ui-icon" ).each(function() {
+					if ($( this ).hasClass( "ui-icon-plusthick" )){
+						$( this ).toggleClass( "ui-icon-minusthick" ).toggleClass( "ui-icon-plusthick" );
+						$( this ).parents( ".portlet:first" ).find( ".portlet-content" ).toggle();
+					}
+			});
+		},
 		
-		p_json.data = {"stepName": $("input#stepName")[0].value, "stepSummary": $("input#stepSummary")[0].value};
-		
-	}else{
-		if( p_json.children != null){
-			p_json.children.forEach( function(node){ updateNodeData(id, node) } );
+		collapseAll: function(){
+			$( ".portlet-header .ui-icon" ).each(function() {
+					if ($( this ).hasClass( "ui-icon-minusthick" )){
+						$( this ).toggleClass( "ui-icon-minusthick" ).toggleClass( "ui-icon-plusthick" );
+						$( this ).parents( ".portlet:first" ).find( ".portlet-content" ).toggle();
+					}
+			});
 		}
-	}
-	
-	
 }
+

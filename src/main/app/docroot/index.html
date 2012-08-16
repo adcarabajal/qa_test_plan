@@ -1,30 +1,103 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="language" content="en" />
 
+	<title>Mulesoft QA Test Center</title>
 
-<link type="text/css" href="css/base.css" rel="stylesheet" />
-<link type="text/css" href="css/Spacetree.css" rel="stylesheet" />
-<script language="javascript" type="text/javascript" src="scripts/jsonpath-0.8.0.js"></script>
-<script language="javascript" type="text/javascript" src="scripts/Jit/jit-yc.js"></script>
-<script language="javascript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-<script language="javascript" type="text/javascript"src="scripts/testplan.js"></script>
+	<!-- DEMO styles - specific to this page -->
+	<link rel="stylesheet" type="text/css" href="css/complex.css" />
+	<!--[if lte IE 7]>
+		<style type="text/css"> body { font-size: 85%; } </style>
+	<![endif]-->
+		<link type="text/css" href="scripts/jqui/css/custom-theme/jquery-ui-1.8.22.custom.css" rel="Stylesheet" />	
+		<script language="javascript" type="text/javascript"src="scripts/jqui/js/jquery-1.7.2.min.js"></script>
+		<script language="javascript" type="text/javascript"src="scripts/jqui/js/jquery-ui-1.8.22.custom.min.js"></script>
+		<script language="javascript" type="text/javascript"src="scripts/testplan.js"></script>
+	<script type="text/javascript" src="scripts/jquery.layout-latest.js"></script>
+	<script type="text/javascript" src="scripts/complex.js"></script>
 </head>
-<body onload="init();">
-<div id="container">
+<body>
 
+<div class="ui-layout-west">
 
+	<div class="header">Test Case Manager</div>
+		<div class="subhead">
+	<input type="button" value="load" onclick="stepSortable.loadFromDB();"></input>
+	</div>
 
-<div id="center-container">
-    <div id="infovis"></div>    
+	<div class="content">
+	</div>
+
+	<div class="footer">soon...</div>
+
+</div>
+
+<div class="ui-layout-east">
+
+	<div class="header">Steps Manager</div>
+
+	<div class="subhead">
+	<input type="button" value="add" onclick="stepSortable.addStep();"></input>
+	<input type="button" value="remove" onclick="stepSortable.delStep();"></input>
+	<input type="button" value="clone" onclick="stepSortable.cloneStep();"></input>
+				<input type="button" value="expandAll" onclick="stepSortableControls.expandAll();"></input>
+				<input type="button" value="collapseAll" onclick="stepSortableControls.collapseAll();"></input>
+	</div>
+
+	<div class="content">
+				<div class="column"></div>
+		
+	</div>
+
+	<div class="footer">Shift + Click to select items</div>
+
 </div>
 
 
-
-<div id="log"></div>
+<div class="ui-layout-north">
+	<div class="header">Test Center</div>
+	<div class="content">
+		
+	</div>
+<!--	<ul class="toolbar">-->
+<!--		<li id="tbarToggleNorth" class="first"><span></span>Toggle NORTH</li>-->
+<!--		<li id="tbarOpenSouth"><span></span>Open SOUTH</li>-->
+<!--		<li id="tbarCloseSouth"><span></span>Close SOUTH</li>-->
+<!--		<li id="tbarPinWest"><span></span>Pin/Unpin WEST</li>-->
+<!--		<li id="tbarPinEast" class="last"><span></span>Pin/Unpin EAST</li>-->
+<!--	</ul>-->
 </div>
 
-<div><input type="button" value="save" onclick="save();"></input>
+
+<div class="ui-layout-south">
+	<div class="header">Outer - South</div>
+	<div class="content">
+		<p>blabla</p>
+	</div>
 </div>
+
+
+<div id="mainContent">
+	<!-- DIVs for the INNER LAYOUT -->
+
+	<div class="ui-layout-center">
+		<h3 class="header">Step Editor</h3>
+		<div class="ui-layout-content">
+						Title<input type="text" id="stepTitle"/>
+				Description<textarea id="stepText"></textarea>
+		</div>
+		<div class="footer">para algo va a servir</div>
+	</div>
+</div>
+
 
 </body>
-</html>
+</html> 
+
+
+
+
+
+

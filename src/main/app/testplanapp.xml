@@ -1,39 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:rest="http://www.mulesoft.org/schema/mule/rest" xmlns:debugger="http://www.mulesoft.org/schema/mule/debugger" xmlns:mongo="http://www.mulesoft.org/schema/mule/mongo" xmlns:objectstore="http://www.mulesoft.org/schema/mule/objectstore" xmlns:jersey="http://www.mulesoft.org/schema/mule/jersey" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:jdbc="http://www.mulesoft.org/schema/mule/ee/jdbc" xmlns:jetty="http://www.mulesoft.org/schema/mule/jetty" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="EE-3.3.0" xsi:schemaLocation="
+<mule xmlns:context="http://www.springframework.org/schema/context" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:rest="http://www.mulesoft.org/schema/mule/rest" xmlns:debugger="http://www.mulesoft.org/schema/mule/debugger" xmlns:mongo="http://www.mulesoft.org/schema/mule/mongo" xmlns:jersey="http://www.mulesoft.org/schema/mule/jersey" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:jdbc="http://www.mulesoft.org/schema/mule/ee/jdbc" xmlns:jetty="http://www.mulesoft.org/schema/mule/jetty" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="EE-3.3.0" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
 http://www.mulesoft.org/schema/mule/rest http://www.mulesoft.org/schema/mule/rest/1.0/mule-rest.xsd 
-http://www.mulesoft.org/schema/mule/debugger http://www.mulesoft.org/schema/mule/debugger/current/mule-debugger.xsd 
 http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mongo/2.0/mule-mongo.xsd 
-http://www.mulesoft.org/schema/mule/objectstore http://www.mulesoft.org/schema/mule/objectstore/1.0/mule-objectstore.xsd 
 http://www.mulesoft.org/schema/mule/jersey http://www.mulesoft.org/schema/mule/jersey/current/mule-jersey.xsd 
-http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd 
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd 
+http://www.mulesoft.org/schema/mule/debugger http://www.mulesoft.org/schema/mule/debugger/current/mule-debugger.xsd 
 http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd 
 http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd 
 http://www.mulesoft.org/schema/mule/ee/jdbc http://www.mulesoft.org/schema/mule/ee/jdbc/current/mule-jdbc-ee.xsd 
 http://www.mulesoft.org/schema/mule/jetty http://www.mulesoft.org/schema/mule/jetty/current/mule-jetty.xsd ">
-    <objectstore:config name="Objectstore" partition="testplan" persistent="true" doc:name="Objectstore"/>
     <rest:config name="Rest" doc:name="Rest"/>
     <mongo:config name="Mongo_DB" username="uplan" password="password" host="flame.mongohq.com" port="27076" database="TestPlan" doc:name="Mongo DB"/>
+    <context:property-placeholder location="mule.properties"/>
     <flow name="indexFlow" doc:name="indexFlow">
         <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="${http.port}" path="admin" doc:name="HTTP"/>
         <http:static-resource-handler resourceBase="${app.home}/docroot" defaultFile="index.html"></http:static-resource-handler>
-    </flow>
-    <flow name="API-REST-STORE" doc:name="API-REST-STORE">
-        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="${http.port}" path="api/store" mimeType="application/json" doc:name="HTTP"/>
-        <rest:router config-ref="Rest" templateUri="/api/store/{key}" doc:name="Rest">
-            <rest:get> 
-                <objectstore:retrieve config-ref="Objectstore" key="#[variable:key]" doc:name="Objectstore"/> 
-            </rest:get>
-            <rest:post> 
-                <echo-component doc:name="Echo"/>  
-                <objectstore:store config-ref="Objectstore" key="#[variable:key]" value-ref="#[payload]" overwrite="true" doc:name="Objectstore"/> 
-            </rest:post>
-            <rest:delete> 
-                <objectstore:remove config-ref="Objectstore" key="#[variable:key]"/> 
-            </rest:delete>
-        </rest:router>
     </flow>
     <flow name="API-REST" doc:name="API-REST">
         <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="${http.port}" path="api/rest" doc:name="HTTP"/>
@@ -63,14 +47,14 @@ http://www.mulesoft.org/schema/mule/jetty http://www.mulesoft.org/schema/mule/je
                 <scripting:component doc:name="Groovy"> 
                     <scripting:script engine="Groovy"> 
                         <scripting:text><![CDATA[
-                import com.mongodb.BasicDBObject
-				message.setInboundProperty("query", new BasicDBObject("id", "1"))
-				payload
-				]]></scripting:text> 
+                            import com.mongodb.BasicDBObject
+            				message.setInboundProperty("query", new BasicDBObject("id", "1"))
+            				payload
+            				]]></scripting:text> 
                     </scripting:script> 
                 </scripting:component>  
                 <echo-component doc:name="Echo"/>  
-                <mongo:update-objects config-ref="Mongo_DB" collection="Nodos" query-ref="#[groovy:message.getInboundProperty('query')]" multi="false" doc:name="Mongo DB"/>
+                <mongo:update-objects config-ref="Mongo_DB" collection="Nodos" query-ref="#[groovy:message.getInboundProperty('query')]" multi="false" doc:name="Mongo DB"/>  
                 <debugger:breakpoint doc:name="Breakpoint"/> 
             </rest:put>
             <rest:post> 
