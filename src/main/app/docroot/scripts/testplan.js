@@ -210,20 +210,40 @@ var stepSortable = {
 		destroy: function(){
 			stepSortable._thisHTML().sortable("destroy");
 		},
-		addStepToUI: function(stepToAdd){
+		createStepFromUIValues: function(){
+			stepSortable.addStep($("#stepTitle").val(), $("#stepText").val(), null);
+		},
+		loadFromDB:function(tcId){
+			var responseMock = [
+								{"id":"1", "name":"test1", "description":"bla bla bla"},
+								{"id":"2", "name":"test2", "description":"bla bla bla"},
+								{"id":"3", "name":"test3", "description":"bla bla bla"},
+								{"id":"4", "name":"test4", "description":"bla bla bla"},
+								{"id":"5", "name":"test5", "description":"bla bla bla"},
+								{"id":"6", "name":"test6", "description":"bla bla bla"},
+								{"id":"7", "name":"test7", "description":"bla bla bla"},
+								{"id":"8", "name":"test8", "description":"bla bla bla"},
+								{"id":"9", "name":"test9", "description":"bla bla bla"},
+								{"id":"10", "name":"test10", "description":"bla bla bla"}
+								];
+			$(responseMock).each(function(){
+				stepSortable.addStep(this.name, this.description, this.id)
+			})
+			
+		},
+		addStep: function(title,content,id){
+			var steps = '<div class="portlet ui-widget ui-widget-content ui-helper-clearfix ui-corner-all"><div class="portlet-header ui-widget-header ui-corner-all"><span class="ui-icon ui-icon-plusthick"></span>' + title  + '</div><div class="portlet-content"style="display:none;">' + content  + '</div></div>';
+			stepSortable.renderStepToUI(steps)
+		},
+		cloneStep: function(){
+			var httpCodeClone = $('.stepSelected').clone();
+			stepSortable.renderStepToUI(httpCodeClone)
+		},
+		renderStepToUI: function(stepToAdd){
 			stepSortable._thisHTML().append(stepToAdd);
 			stepSortable.destroy();
 			stepSortable.bindEvents();
 			stepSortable.create();
-		},
-		addStep: function(title,content,id){
-			var steps = '';
-			if(typeof title == "undefined"){
-				steps = '<div class="portlet ui-widget ui-widget-content ui-helper-clearfix ui-corner-all"><div class="portlet-header ui-widget-header ui-corner-all"><span class="ui-icon ui-icon-plusthick"></span>' + $("#stepTitle").val()  + '</div><div class="portlet-content"style="display:none;">' + $("#stepText").val()  + '</div></div>';
-			}else{
-				steps = '<div class="portlet ui-widget ui-widget-content ui-helper-clearfix ui-corner-all"><div class="portlet-header ui-widget-header ui-corner-all"><span class="ui-icon ui-icon-plusthick"></span>' + title  + '</div><div class="portlet-content"style="display:none;">' + content  + '</div></div>';
-			}
-			stepSortable.addStepToUI(steps)
 		},
 		delStep: function(){
 			$('.stepSelected').remove()
@@ -231,33 +251,31 @@ var stepSortable = {
 			stepSortable.bindEvents();
 			stepSortable.create();
 		},
-		cloneStep: function(){
-			var httpCodeClone = $('.stepSelected').clone();
-			stepSortable.addStepToUI(httpCodeClone)
-		}
-		,
 		bindEvents: function(){
 			$('.portlet-header').unbind('click')
+			
 			$('.portlet-header').click(function(event) {
-				if (event.shiftKey) {
-					event.preventDefault();
-					$(this).parents('.portlet').toggleClass("stepSelected");
-				}else{
-					$("#stepTitle").val($(this).text())
-					$("#stepText").val($(this).parent().find('.portlet-content').text())
+				switch (true){
+					case event.metaKey:
+						event.preventDefault();
+						$(this).parents('.portlet').toggleClass("stepSelected");
+						break;
+					case event.shiftKey:
+						event.preventDefault();
+						stepSortableControls.selectBlock($(this));
+						break;
+					default:
+						$("#stepTitle").val($(this).text())
+						$("#stepText").val($(this).parent().find('.portlet-content').text())
+						break;
 				}
 			});
+			
 			$( ".portlet-header .ui-icon" ).unbind('click')
 			$( ".portlet-header .ui-icon" ).click(function() {
 					$( this ).toggleClass( "ui-icon-minusthick" ).toggleClass( "ui-icon-plusthick" );
 					$( this ).parents( ".portlet:first" ).find( ".portlet-content" ).toggle();
 			});
-		},
-		loadFromDB:function(tcId){
-			var responseMock = "";
-			for(i=0;i<10;i++){
-				stepSortable.addStep("titulo", "contenido", "id")
-			}
 		}
 };
 
@@ -279,6 +297,33 @@ var stepSortableControls = {
 						$( this ).parents( ".portlet:first" ).find( ".portlet-content" ).toggle();
 					}
 			});
+		},
+		selectAll: function(){
+			$( ".portlet-header" ).each(function() {
+					$( this ).parents('.portlet').addClass("stepSelected")
+			});
+		},
+		unSelectAll: function(){
+			$( ".portlet-header" ).each(function() {
+					$( this ).parents('.portlet').removeClass("stepSelected")
+			});
+		},
+		selectBlock: function(lastSelectedElement){
+			$(lastSelectedElement).parents('.portlet').toggleClass("stepSelected");
+			corr = [];
+			$('.portlet').each(function(indice){
+				if ($(this).hasClass("stepSelected")){
+					corr[indice] = $(this).index();
+				}
+			})
+			console.log(corr);
+//			nextStep = $(lastSelectedElement).parents('.portlet').prev();
+//			while(nextStep.hasClass("stepSelected") != "false"){
+//				console.log(nextStep.hasClass("stepSelected"))
+//				nextStep.toggleClass("stepSelected");
+//				currentStep = $(nextStep).clone();
+//				nextStep = $(currentStep).prev();
+//			}
 		}
 }
 
