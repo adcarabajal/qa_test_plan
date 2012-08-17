@@ -22,12 +22,12 @@
 
 <div class="ui-layout-west">
 
-	<div class="header">Test Case Manager</div>
+	<div class="header ui-widget-header">Test Case Manager</div>
 		<div class="subhead">
 	<input type="button" value="load" onclick="stepSortable.loadFromDB();"></input>
 	</div>
 
-	<div class="content">
+	<div class="ui-widget-texture content">
 	</div>
 
 	<div class="footer">soon...</div>
@@ -36,17 +36,18 @@
 
 <div class="ui-layout-east">
 
-	<div class="header">Steps Manager</div>
+	<div class="header ui-widget-header">Steps Manager</div>
 
 	<div class="subhead">
-	<input type="button" value="add" onclick="stepSortable.addStep();"></input>
-	<input type="button" value="remove" onclick="stepSortable.delStep();"></input>
-	<input type="button" value="clone" onclick="stepSortable.cloneStep();"></input>
-				<input type="button" value="expandAll" onclick="stepSortableControls.expandAll();"></input>
-				<input type="button" value="collapseAll" onclick="stepSortableControls.collapseAll();"></input>
+		<input type="button" value="remove" onclick="stepSortable.delStep();"></input>
+		<input type="button" value="clone" onclick="stepSortable.cloneStep();"></input>
+		<input type="button" value="expandAll" onclick="stepSortableControls.expandAll();"></input>
+		<input type="button" value="collapseAll" onclick="stepSortableControls.collapseAll();"></input><br />
+		<input type="button" value="selectAll" onclick="stepSortableControls.selectAll();"></input>
+		<input type="button" value="unselectAll" onclick="stepSortableControls.unSelectAll();"></input>
 	</div>
 
-	<div class="content">
+	<div class="ui-widget-texture content">
 				<div class="column"></div>
 		
 	</div>
@@ -57,8 +58,8 @@
 
 
 <div class="ui-layout-north">
-	<div class="header">Test Center</div>
-	<div class="content">
+	<div class="header ui-widget-header">Test Center</div>
+	<div class="ui-widget-texture content">
 		
 	</div>
 <!--	<ul class="toolbar">-->
@@ -72,8 +73,8 @@
 
 
 <div class="ui-layout-south">
-	<div class="header">Outer - South</div>
-	<div class="content">
+	<div class="header ui-widget-header">Outer - South</div>
+	<div class="ui-widget-texture content">
 		<p>blabla</p>
 	</div>
 </div>
@@ -81,12 +82,14 @@
 
 <div id="mainContent">
 	<!-- DIVs for the INNER LAYOUT -->
-
 	<div class="ui-layout-center">
-		<h3 class="header">Step Editor</h3>
+		<h3 class="header ui-widget-header">Step Editor</h3>
+	<div class="subhead">
+	<input type="button" value="add" onclick="stepSortable.createStepFromUIValues();"></input>
+	</div>
 		<div class="ui-layout-content">
 						Title<input type="text" id="stepTitle"/>
-				Description<textarea id="stepText"></textarea>
+				Description<textarea id="stepText" class="ui-widget-content"></textarea>
 		</div>
 		<div class="footer">para algo va a servir</div>
 	</div>
