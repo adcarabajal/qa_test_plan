@@ -1,70 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:context="http://www.springframework.org/schema/context" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:rest="http://www.mulesoft.org/schema/mule/rest" xmlns:debugger="http://www.mulesoft.org/schema/mule/debugger" xmlns:mongo="http://www.mulesoft.org/schema/mule/mongo" xmlns:jersey="http://www.mulesoft.org/schema/mule/jersey" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:jdbc="http://www.mulesoft.org/schema/mule/ee/jdbc" xmlns:jetty="http://www.mulesoft.org/schema/mule/jetty" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="EE-3.3.0" xsi:schemaLocation="
+<mule xmlns:jdbc-ee="http://www.mulesoft.org/schema/mule/ee/jdbc" xmlns:context="http://www.springframework.org/schema/context" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:rest="http://www.mulesoft.org/schema/mule/rest" xmlns:debugger="http://www.mulesoft.org/schema/mule/debugger" xmlns:mongo="http://www.mulesoft.org/schema/mule/mongo" xmlns:jersey="http://www.mulesoft.org/schema/mule/jersey" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:jdbc="http://www.mulesoft.org/schema/mule/ee/jdbc" xmlns:jetty="http://www.mulesoft.org/schema/mule/jetty" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="EE-3.3.0" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
 http://www.mulesoft.org/schema/mule/rest http://www.mulesoft.org/schema/mule/rest/1.0/mule-rest.xsd 
-http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mongo/2.0/mule-mongo.xsd 
-http://www.mulesoft.org/schema/mule/jersey http://www.mulesoft.org/schema/mule/jersey/current/mule-jersey.xsd 
+http://www.mulesoft.org/schema/mule/ee/jdbc http://www.mulesoft.org/schema/mule/ee/jdbc/current/mule-jdbc-ee.xsd 
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd 
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd 
 http://www.mulesoft.org/schema/mule/debugger http://www.mulesoft.org/schema/mule/debugger/current/mule-debugger.xsd 
+http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mongo/2.0/mule-mongo.xsd 
+http://www.mulesoft.org/schema/mule/jersey http://www.mulesoft.org/schema/mule/jersey/current/mule-jersey.xsd 
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd 
 http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd 
 http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd 
 http://www.mulesoft.org/schema/mule/ee/jdbc http://www.mulesoft.org/schema/mule/ee/jdbc/current/mule-jdbc-ee.xsd 
 http://www.mulesoft.org/schema/mule/jetty http://www.mulesoft.org/schema/mule/jetty/current/mule-jetty.xsd ">
     <rest:config name="Rest" doc:name="Rest"/>
-    <mongo:config name="Mongo_DB" username="uplan" password="password" host="flame.mongohq.com" port="27076" database="TestPlan" doc:name="Mongo DB"/>
+     <jdbc-ee:mysql-data-source  name="MySQL_Data_Source"  password=""  user="root"  url="jdbc:mysql://172.16.20.35:3306/tcmanager" transactionIsolation="UNSPECIFIED" doc:name="MySQL Data Source"/>
+    <jdbc-ee:connector name="Database__JDBC_" dataSource-ref="MySQL_Data_Source" validateConnections="true" queryTimeout="-1" pollingFrequency="0" doc:name="Database (JDBC)"/>
     <context:property-placeholder location="mule.properties"/>
     <flow name="indexFlow" doc:name="indexFlow">
         <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="${http.port}" path="admin" doc:name="HTTP"/>
         <http:static-resource-handler resourceBase="${app.home}/docroot" defaultFile="index.html"></http:static-resource-handler>
     </flow>
-    <flow name="API-REST" doc:name="API-REST">
-        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="${http.port}" path="api/rest" doc:name="HTTP"/>
-        <jersey:resources doc:name="REST">
-            <component class="org.mule.transport.jersey.MyRest"/>
-        </jersey:resources>
-    </flow>
-    <flow name="API-DB" doc:name="API-DB">
-        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="${http.port}" path="api/db" mimeType="application/json" doc:name="HTTP"/>
-        <rest:router config-ref="Rest" templateUri="/api/db/{_id}" doc:name="Rest">
+    <flow name="jdbctestFlow1" doc:name="jdbctestFlow1">
+        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="${http.port}" doc:name="HTTP"/>
+        <rest:router xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" config-ref="Rest" templateUri="/db/{queryKey}/{params}" doc:name="Rest">
             <rest:get> 
-                <expression-transformer> 
-                    <return-argument evaluator="string" expression="{'id' : '#[variable:_id]'}"/> 
-                </expression-transformer>  
-                <mongo:json-to-dbobject/>  
-                <mongo:find-objects config-ref="Mongo_DB" collection="Nodos" query-ref="#[payload]" doc:name="Mongo DB"> 
-                    <mongo:fields> 
-                        <mongo:field>data</mongo:field>  
-                        <mongo:field>name</mongo:field>  
-                        <mongo:field>id</mongo:field>  
-                        <mongo:field>children</mongo:field> 
-                    </mongo:fields> 
-                </mongo:find-objects>  
-                <mongo:mongo-collection-to-json encoding="UTF-8" doc:name="Mongo DB"/> 
+                <jdbc-ee:outbound-endpoint exchange-pattern="request-response" connector-ref="Database__JDBC_" queryKey="#[variable:queryKey]" doc:name="Database (JDBC)" queryTimeout="-1"> 
+                    <jdbc-ee:query key="selectProject" value="select * from project"/>  
+                    <jdbc-ee:query key="selectVersion" value="select pv.id, v.version from version v inner join project_version pv on v.id=pv.versionId where projectId=#[variable:params]"/>  
+                    <jdbc-ee:query key="selectSuite" value="select ts.id, ts.name, ts.description from test_suite ts inner join project_version pv on ts.project_versionId=pv.id where pv.id=#[variable:params]"/>  
+                    <jdbc-ee:query key="selectTestCase" value="select tc.* from test_case tc inner join test_suite_test_case suite on tc.id= suite.testId where suiteId=#[variable:params]"/>  
+                    <jdbc-ee:query key="selectStep" value="select st.* from steps st inner join test_case_step tc_s on st.id= tc_s.stepId where tc_s.testId=#[variable:params]"/> 
+                </jdbc-ee:outbound-endpoint>  
+                <json:object-to-json-transformer doc:name="Object to JSON"/> 
             </rest:get>
-            <rest:put> 
-                <scripting:component doc:name="Groovy"> 
-                    <scripting:script engine="Groovy"> 
-                        <scripting:text><![CDATA[
-                            import com.mongodb.BasicDBObject
-            				message.setInboundProperty("query", new BasicDBObject("id", "1"))
-            				payload
-            				]]></scripting:text> 
-                    </scripting:script> 
-                </scripting:component>  
-                <echo-component doc:name="Echo"/>  
-                <mongo:update-objects config-ref="Mongo_DB" collection="Nodos" query-ref="#[groovy:message.getInboundProperty('query')]" multi="false" doc:name="Mongo DB"/>  
-                <debugger:breakpoint doc:name="Breakpoint"/> 
-            </rest:put>
-            <rest:post> 
-                <echo-component doc:name="Echo"/>  
-                <mongo:insert-object config-ref="Mongo_DB" collection="Nodos" doc:name="Mongo DB"/> 
-            </rest:post>
-            <rest:delete> 
-                <echo-component doc:name="Echo"/>  
-                <!-- <objectstore:remove config-ref="Objectstore" key="#[variable:key]"/> --> 
-            </rest:delete>
         </rest:router>
         
     </flow>
