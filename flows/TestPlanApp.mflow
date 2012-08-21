@@ -64,7 +64,7 @@
             <property value="4" name="auxiliary;index"/>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="indexFlow" entity-id="ee576c00-cab5-4b21-afe8-90fb01cf439d">
+    <flow SubFlow="false" name="indexFlow" entity-id="915d8608-730d-4d17-bfc6-a430a920f32d">
         <properties>
             <property name="processingStrategy2"/>
             <property name="processingStrategy"/>
@@ -123,7 +123,7 @@
             </unknown>
         </lane>
     </flow>
-    <flow SubFlow="false" name="jdbctestFlow1" entity-id="f84b4a7d-1d72-4b11-befa-323ae6eaa2ad">
+    <flow SubFlow="false" name="jdbctestFlow1" entity-id="375fab5c-bc8c-4c5b-a362-b4027402250a">
         <properties>
             <property name="processingStrategy2"/>
             <property name="processingStrategy"/>

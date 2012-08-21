@@ -27,11 +27,11 @@ http://www.mulesoft.org/schema/mule/jetty http://www.mulesoft.org/schema/mule/je
         <rest:router xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" config-ref="Rest" templateUri="/db/{queryKey}/{params}" doc:name="Rest">
             <rest:get> 
                 <jdbc-ee:outbound-endpoint exchange-pattern="request-response" connector-ref="Database__JDBC_" queryKey="#[variable:queryKey]" doc:name="Database (JDBC)" queryTimeout="-1"> 
-                    <jdbc-ee:query key="selectProject" value="select * from project"/>  
-                    <jdbc-ee:query key="selectVersion" value="select pv.id, v.version from version v inner join project_version pv on v.id=pv.versionId where projectId=#[variable:params]"/>  
-                    <jdbc-ee:query key="selectSuite" value="select ts.id, ts.name, ts.description from test_suite ts inner join project_version pv on ts.project_versionId=pv.id where pv.id=#[variable:params]"/>  
-                    <jdbc-ee:query key="selectTestCase" value="select tc.* from test_case tc inner join test_suite_test_case suite on tc.id= suite.testId where suiteId=#[variable:params]"/>  
-                    <jdbc-ee:query key="selectStep" value="select st.* from steps st inner join test_case_step tc_s on st.id= tc_s.stepId where tc_s.testId=#[variable:params]"/> 
+                    <jdbc-ee:query key="getProjects" value="select type, description, name, id from project"/>  
+                    <jdbc-ee:query key="getVersions" value="select  v.version, pv.id, v.type from version v inner join project_version pv on v.id=pv.versionId where projectId=#[variable:params]"/>  
+                    <jdbc-ee:query key="getSuites" value="select ts.id, ts.name, ts.description, ts.type from test_suite ts inner join project_version pv on ts.project_versionId=pv.id where pv.id=#[variable:params]"/>  
+                    <jdbc-ee:query key="getTestCases" value="select tc.* from test_case tc inner join test_suite_test_case suite on tc.id= suite.testId where suiteId=#[variable:params]"/>  
+                    <jdbc-ee:query key="getSteps" value="select st.* from steps st inner join test_case_step tc_s on st.id= tc_s.stepId where tc_s.testId=#[variable:params]"/> 
                 </jdbc-ee:outbound-endpoint>  
                 <json:object-to-json-transformer doc:name="Object to JSON"/> 
             </rest:get>
