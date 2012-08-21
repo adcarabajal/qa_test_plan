@@ -64,7 +64,7 @@
             <property value="4" name="auxiliary;index"/>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="indexFlow" entity-id="915d8608-730d-4d17-bfc6-a430a920f32d">
+    <flow SubFlow="false" name="indexFlow" entity-id="241ca3e4-0590-48f9-8661-e25a0ed07b66">
         <properties>
             <property name="processingStrategy2"/>
             <property name="processingStrategy"/>
@@ -123,7 +123,7 @@
             </unknown>
         </lane>
     </flow>
-    <flow SubFlow="false" name="jdbctestFlow1" entity-id="375fab5c-bc8c-4c5b-a362-b4027402250a">
+    <flow SubFlow="false" name="DB-API" entity-id="1902b66e-0826-48c8-9cf5-e00da7630413">
         <properties>
             <property name="processingStrategy2"/>
             <property name="processingStrategy"/>
@@ -196,6 +196,92 @@
                     <property value="10" name="auxiliary;index"/>
                     <property value="10" name="auxiliary;index"/>
                     <property value="10" name="auxiliary;index"/>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="true" name="TestCase_subflow" entity-id="ebeb86c6-0cb8-4f16-9989-c200040111ee">
+        <properties>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property value="22" name="auxiliary;index"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property value="22" name="auxiliary;index"/>
+            <property value="22" name="auxiliary;index"/>
+            <property value="22" name="auxiliary;index"/>
+        </properties>
+        <lane index="0" hadOnlyOneElement="false" entity-id="compartment-lane#3">
+            <endpoint message-exchange-pattern="OneWay" direction="Outbound" type="http://www.mulesoft.org/schema/mule/ee/jdbc/endpoint" name="Database (JDBC)" entity-id="Database (JDBC)#2">
+                <properties>
+                    <property value="one-way" name="exchange-pattern"/>
+                    <property value="request-response" name="exchange-pattern"/>
+                    <property value="23" name="auxiliary;index"/>
+                    <property name=""/>
+                    <property value="#[variable:queryKey]" name="queryKey"/>
+                    <property value="23" name="auxiliary;index"/>
+                    <property value="23" name="auxiliary;index"/>
+                    <property value="23" name="auxiliary;index"/>
+                    <property value="23" name="auxiliary;index"/>
+                    <property value="23" name="auxiliary;index"/>
+                    <property name="businessEventsLabel"/>
+                    <property name="tracking:enable-default-events"/>
+                    <property value="23" name="auxiliary;index"/>
+                    <property name="address"/>
+                    <property name="responseTimeout"/>
+                    <property name="encoding"/>
+                    <property name="disableTransportTransformer"/>
+                    <property name="mimeType"/>
+                    <property value="23" name="auxiliary;index"/>
+                    <property value="-1" name="queryTimeout"/>
+                    <property name="pollingFrequency"/>
+                    <property value="23" name="auxiliary;index"/>
+                    <property value="23" name="auxiliary;index"/>
+                    <property value="23" name="auxiliary;index"/>
+                    <property value="Database__JDBC_" name="connector-ref"/>
+                    <property name="ref"/>
+                    <property name="transformer-refs"/>
+                    <property name="responseTransformer-refs"/>
+                    <property value="23" name="auxiliary;index"/>
+                    <property value="23" name="auxiliary;index"/>
+                    <property value="23" name="auxiliary;index"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/ee/jdbc/query;0">
+                        <property value="select TC.*, L.id 'labelId', L.label from test_case TC &#xA;inner join label_test_case LTC on TC.id=LTC.testId&#xA;inner join labels L on L.id = LTC.labelId&#xA;inner join project_label PL on PL.labelid = L.id&#xA;where PL.projectId=5&#xA;&#xA;order by TC.order" name="value"/>
+                        <property value="24" name="auxiliary;wrapIn"/>
+                        <property value="24" name="auxiliary;index"/>
+                        <property value="getTestCases" name="key"/>
+                    </property-collection>
+                </properties>
+            </endpoint>
+            <pattern type="org.mule.tooling.ui.modules.core.pattern.customTransformer" name="Java" entity-id="Java#1">
+                <properties>
+                    <property name="returnClass"/>
+                    <property name="ignoreBadInput"/>
+                    <property name="encoding"/>
+                    <property value="25" name="auxiliary;index"/>
+                    <property name="mimeType"/>
+                    <property value="25" name="auxiliary;index"/>
+                    <property value="25" name="auxiliary;index"/>
+                    <property value="org.mule.definition.TestCaseTransformer" name="class"/>
+                    <property value="25" name="auxiliary;index"/>
+                    <property value="25" name="auxiliary;index"/>
+                    <property value="25" name="auxiliary;index"/>
+                </properties>
+            </pattern>
+            <pattern type="http://www.mulesoft.org/schema/mule/json/object-to-json-transformer" name="Object to JSON" entity-id="Object to JSON#1">
+                <properties>
+                    <property name="returnClass"/>
+                    <property name="ignoreBadInput"/>
+                    <property name="encoding"/>
+                    <property value="26" name="auxiliary;index"/>
+                    <property name="mimeType"/>
+                    <property value="26" name="auxiliary;index"/>
+                    <property value="26" name="auxiliary;index"/>
+                    <property name="mapper-ref"/>
+                    <property name="sourceClass"/>
+                    <property value="26" name="auxiliary;index"/>
+                    <property value="26" name="auxiliary;index"/>
+                    <property value="26" name="auxiliary;index"/>
                 </properties>
             </pattern>
         </lane>
