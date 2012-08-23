@@ -391,3 +391,7 @@ span.button-close-east:hover	{ background: url(../img/go-rt-on.gif)  no-repeat c
 .portlet-content { font-size:13px; padding: 0.4em; }
 .ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important; }
 .ui-sortable-placeholder * { visibility: hidden; }
+.version{background:grey;}
+.suite{}
+.tc{background:grey;}
+.step{}

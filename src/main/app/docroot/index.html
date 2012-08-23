@@ -12,23 +12,43 @@
 		<style type="text/css"> body { font-size: 85%; } </style>
 	<![endif]-->
 		<link type="text/css" href="scripts/jqui/css/custom-theme/jquery-ui-1.8.22.custom.css" rel="Stylesheet" />	
+		<link rel="stylesheet" href="css/token-input-facebook.css" type="text/css" />
 		<script language="javascript" type="text/javascript"src="scripts/jqui/js/jquery-1.7.2.min.js"></script>
 		<script language="javascript" type="text/javascript"src="scripts/jqui/js/jquery-ui-1.8.22.custom.min.js"></script>
-		<script language="javascript" type="text/javascript"src="scripts/testplan.js"></script>
-	<script type="text/javascript" src="scripts/jquery.layout-latest.js"></script>
+		<script type="text/javascript" src="scripts/jquery.layout-latest.js"></script>
+		<script language="javascript" type="text/javascript"src="scripts/utils.js"></script>
+		<script language="javascript" type="text/javascript"src="scripts/jquery.tokeninput.js"></script>
 	<script type="text/javascript" src="scripts/complex.js"></script>
+		<script language="javascript" type="text/javascript"src="scripts/naitse.js"></script>
+		<script language="javascript" type="text/javascript"src="scripts/layout.js"></script>
+		<script language="javascript" type="text/javascript"src="scripts/liveBinds.js"></script>
 </head>
 <body>
 
 <div class="ui-layout-west">
 
-	<div class="header ui-widget-header">Test Case Manager</div>
-		<div class="subhead">
-	<input type="button" value="load" onclick="stepSortable.loadFromDB();"></input>
+	<div class="header ui-widget-header">Projects</div>
+	<div class="subhead">
+	<input id="backButton" disabled="true" type="button" value="back" onclick="stepSortableControls.prevResults();"></input>
+		<input type="button" value="remove" onclick="stepSortable.delStep();"></input>
+		<input type="button" value="clone" onclick="stepSortable.cloneStep();"></input>
+		<input type="button" value="expandAll" onclick="stepSortableControls.expandAll();"></input>
+		<input type="button" value="collapseAll" onclick="stepSortableControls.collapseAll();"></input><br />
+		<input type="button" value="selectAll" onclick="stepSortableControls.selectAll();"></input>
+		<input type="button" value="unselectAll" onclick="stepSortableControls.unSelectAll();"></input>
+		<input class="autocompletable"/>
 	</div>
 
 	<div class="ui-widget-texture content">
+				<div class="column"></div>
+		
 	</div>
+<!--		<div class="subhead">-->
+<!--	<input type="button" value="load" onclick="stepSortable.loadFromDB();"></input>-->
+<!--	</div>-->
+<!---->
+<!--	<div class="ui-widget-texture content">-->
+<!--	</div>-->
 
 	<div class="footer">soon...</div>
 
@@ -38,19 +58,19 @@
 
 	<div class="header ui-widget-header">Steps Manager</div>
 
-	<div class="subhead">
-		<input type="button" value="remove" onclick="stepSortable.delStep();"></input>
-		<input type="button" value="clone" onclick="stepSortable.cloneStep();"></input>
-		<input type="button" value="expandAll" onclick="stepSortableControls.expandAll();"></input>
-		<input type="button" value="collapseAll" onclick="stepSortableControls.collapseAll();"></input><br />
-		<input type="button" value="selectAll" onclick="stepSortableControls.selectAll();"></input>
-		<input type="button" value="unselectAll" onclick="stepSortableControls.unSelectAll();"></input>
-	</div>
-
-	<div class="ui-widget-texture content">
-				<div class="column"></div>
-		
-	</div>
+<!--	<div class="subhead">-->
+<!--		<input type="button" value="remove" onclick="stepSortable.delStep();"></input>-->
+<!--		<input type="button" value="clone" onclick="stepSortable.cloneStep();"></input>-->
+<!--		<input type="button" value="expandAll" onclick="stepSortableControls.expandAll();"></input>-->
+<!--		<input type="button" value="collapseAll" onclick="stepSortableControls.collapseAll();"></input><br />-->
+<!--		<input type="button" value="selectAll" onclick="stepSortableControls.selectAll();"></input>-->
+<!--		<input type="button" value="unselectAll" onclick="stepSortableControls.unSelectAll();"></input>-->
+<!--	</div>-->
+<!---->
+<!--	<div class="ui-widget-texture content">-->
+<!--				<div class="column"></div>-->
+<!--		-->
+<!--	</div>-->
 
 	<div class="footer">Shift + Click to select items</div>
 
