@@ -2,6 +2,9 @@ package org.mule.definition;
 
 import java.util.ArrayList;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+
+@JsonAutoDetect
 public class TestCase {
 	private int id;
     private String name;
@@ -10,8 +13,9 @@ public class TestCase {
     private String creator;
     private String type;
     private ArrayList<Label> labels;
+    private ArrayList<Version> versions;
     
-    public TestCase(int id, String name, String description, int order, String creator, String type, ArrayList<Label> labels){
+    public TestCase(int id, String name, String description, int order, String creator, String type, ArrayList<Label> labels, ArrayList<Version> versions){
     	this.setId(id);
     	this.setName(name);
     	this.setDescription(description);
@@ -19,6 +23,7 @@ public class TestCase {
     	this.setCreator(creator);
     	this.setType(type);	
     	this.setLabels(labels); 
+    	this.setVersions(versions);
     }
 
 	public void setId(int id) {
@@ -75,6 +80,14 @@ public class TestCase {
 
 	public ArrayList<Label> getLabels() {
 		return labels;
+	}
+
+	public void setVersions(ArrayList<Version> versions) {
+		this.versions = versions;
+	}
+
+	public ArrayList<Version> getVersions() {
+		return versions;
 	}
 
 	

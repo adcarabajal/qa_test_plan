@@ -64,7 +64,7 @@
             <property value="4" name="auxiliary;index"/>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="indexFlow" entity-id="241ca3e4-0590-48f9-8661-e25a0ed07b66">
+    <flow SubFlow="false" name="indexFlow" entity-id="6cbcf544-0468-426f-9e2a-4ddb918b0061">
         <properties>
             <property name="processingStrategy2"/>
             <property name="processingStrategy"/>
@@ -123,7 +123,7 @@
             </unknown>
         </lane>
     </flow>
-    <flow SubFlow="false" name="DB-API" entity-id="1902b66e-0826-48c8-9cf5-e00da7630413">
+    <flow SubFlow="false" name="DB-API" entity-id="e6387860-1273-48de-9334-ea928cca41ea">
         <properties>
             <property name="processingStrategy2"/>
             <property name="processingStrategy"/>
@@ -145,7 +145,7 @@
                     <property name="httpLabel"/>
                     <property value="localhost" name="host"/>
                     <property value="${http.port}" name="port"/>
-                    <property name="path"/>
+                    <property value="db" name="path"/>
                     <property name="method"/>
                     <property value="9" name="auxiliary;index"/>
                     <property value="9" name="auxiliary;index"/>
@@ -200,55 +200,55 @@
             </pattern>
         </lane>
     </flow>
-    <flow SubFlow="true" name="TestCase_subflow" entity-id="ebeb86c6-0cb8-4f16-9989-c200040111ee">
+    <flow SubFlow="true" name="TestCase_subflow" entity-id="086627d7-a7c8-4bcc-8264-a05bf951f968">
         <properties>
             <property name="processingStrategy2"/>
             <property name="processingStrategy"/>
-            <property value="22" name="auxiliary;index"/>
+            <property value="23" name="auxiliary;index"/>
             <property name="bussinessEventsLabel"/>
             <property name="tracking:enable-default-events"/>
-            <property value="22" name="auxiliary;index"/>
-            <property value="22" name="auxiliary;index"/>
-            <property value="22" name="auxiliary;index"/>
+            <property value="23" name="auxiliary;index"/>
+            <property value="23" name="auxiliary;index"/>
+            <property value="23" name="auxiliary;index"/>
         </properties>
         <lane index="0" hadOnlyOneElement="false" entity-id="compartment-lane#3">
             <endpoint message-exchange-pattern="OneWay" direction="Outbound" type="http://www.mulesoft.org/schema/mule/ee/jdbc/endpoint" name="Database (JDBC)" entity-id="Database (JDBC)#2">
                 <properties>
                     <property value="one-way" name="exchange-pattern"/>
                     <property value="request-response" name="exchange-pattern"/>
-                    <property value="23" name="auxiliary;index"/>
+                    <property value="24" name="auxiliary;index"/>
                     <property name=""/>
                     <property value="#[variable:queryKey]" name="queryKey"/>
-                    <property value="23" name="auxiliary;index"/>
-                    <property value="23" name="auxiliary;index"/>
-                    <property value="23" name="auxiliary;index"/>
-                    <property value="23" name="auxiliary;index"/>
-                    <property value="23" name="auxiliary;index"/>
+                    <property value="24" name="auxiliary;index"/>
+                    <property value="24" name="auxiliary;index"/>
+                    <property value="24" name="auxiliary;index"/>
+                    <property value="24" name="auxiliary;index"/>
+                    <property value="24" name="auxiliary;index"/>
                     <property name="businessEventsLabel"/>
                     <property name="tracking:enable-default-events"/>
-                    <property value="23" name="auxiliary;index"/>
+                    <property value="24" name="auxiliary;index"/>
                     <property name="address"/>
                     <property name="responseTimeout"/>
                     <property name="encoding"/>
                     <property name="disableTransportTransformer"/>
                     <property name="mimeType"/>
-                    <property value="23" name="auxiliary;index"/>
+                    <property value="24" name="auxiliary;index"/>
                     <property value="-1" name="queryTimeout"/>
                     <property name="pollingFrequency"/>
-                    <property value="23" name="auxiliary;index"/>
-                    <property value="23" name="auxiliary;index"/>
-                    <property value="23" name="auxiliary;index"/>
+                    <property value="24" name="auxiliary;index"/>
+                    <property value="24" name="auxiliary;index"/>
+                    <property value="24" name="auxiliary;index"/>
                     <property value="Database__JDBC_" name="connector-ref"/>
                     <property name="ref"/>
                     <property name="transformer-refs"/>
                     <property name="responseTransformer-refs"/>
-                    <property value="23" name="auxiliary;index"/>
-                    <property value="23" name="auxiliary;index"/>
-                    <property value="23" name="auxiliary;index"/>
+                    <property value="24" name="auxiliary;index"/>
+                    <property value="24" name="auxiliary;index"/>
+                    <property value="24" name="auxiliary;index"/>
                     <property-collection name="@http://www.mulesoft.org/schema/mule/ee/jdbc/query;0">
-                        <property value="select TC.*, L.id 'labelId', L.label from test_case TC &#xA;inner join label_test_case LTC on TC.id=LTC.testId&#xA;inner join labels L on L.id = LTC.labelId&#xA;inner join project_label PL on PL.labelid = L.id&#xA;where PL.projectId=5&#xA;&#xA;order by TC.order" name="value"/>
-                        <property value="24" name="auxiliary;wrapIn"/>
-                        <property value="24" name="auxiliary;index"/>
+                        <property value="select  TC.*,  PTC.order, &#xA;(select  L.id from labels L where LTC.labelid= L.id ) 'labelid',&#xA;(select  L.label from labels L where LTC.labelid= L.id ) 'label',&#xA;(select V.id from version V where V.id = VTC.versionId) 'versionid',&#xA;(select V.version from version V where V.id = VTC.versionId) 'version'&#xA;from test_case TC&#xA;left join label_test_case LTC on TC.id = LTC.testId&#xA;left join version_test_case VTC on TC.id = VTC.testId&#xA;inner join project_test_case PTC on TC.id = PTC.testid&#xA;where PTC.projectId = #[variable:params]&#xA;order by PTC.order" name="value"/>
+                        <property value="25" name="auxiliary;wrapIn"/>
+                        <property value="25" name="auxiliary;index"/>
                         <property value="getTestCases" name="key"/>
                     </property-collection>
                 </properties>
@@ -258,30 +258,30 @@
                     <property name="returnClass"/>
                     <property name="ignoreBadInput"/>
                     <property name="encoding"/>
-                    <property value="25" name="auxiliary;index"/>
+                    <property value="26" name="auxiliary;index"/>
                     <property name="mimeType"/>
-                    <property value="25" name="auxiliary;index"/>
-                    <property value="25" name="auxiliary;index"/>
+                    <property value="26" name="auxiliary;index"/>
+                    <property value="26" name="auxiliary;index"/>
                     <property value="org.mule.definition.TestCaseTransformer" name="class"/>
-                    <property value="25" name="auxiliary;index"/>
-                    <property value="25" name="auxiliary;index"/>
-                    <property value="25" name="auxiliary;index"/>
+                    <property value="26" name="auxiliary;index"/>
+                    <property value="26" name="auxiliary;index"/>
+                    <property value="26" name="auxiliary;index"/>
                 </properties>
             </pattern>
             <pattern type="http://www.mulesoft.org/schema/mule/json/object-to-json-transformer" name="Object to JSON" entity-id="Object to JSON#1">
                 <properties>
                     <property name="returnClass"/>
-                    <property name="ignoreBadInput"/>
+                    <property value="true" name="ignoreBadInput"/>
                     <property name="encoding"/>
-                    <property value="26" name="auxiliary;index"/>
+                    <property value="27" name="auxiliary;index"/>
                     <property name="mimeType"/>
-                    <property value="26" name="auxiliary;index"/>
-                    <property value="26" name="auxiliary;index"/>
+                    <property value="27" name="auxiliary;index"/>
+                    <property value="27" name="auxiliary;index"/>
                     <property name="mapper-ref"/>
                     <property name="sourceClass"/>
-                    <property value="26" name="auxiliary;index"/>
-                    <property value="26" name="auxiliary;index"/>
-                    <property value="26" name="auxiliary;index"/>
+                    <property value="27" name="auxiliary;index"/>
+                    <property value="27" name="auxiliary;index"/>
+                    <property value="27" name="auxiliary;index"/>
                 </properties>
             </pattern>
         </lane>

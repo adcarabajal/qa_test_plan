@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:jdbc-ee="http://www.mulesoft.org/schema/mule/ee/jdbc" xmlns:context="http://www.springframework.org/schema/context" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:rest="http://www.mulesoft.org/schema/mule/rest" xmlns:debugger="http://www.mulesoft.org/schema/mule/debugger" xmlns:mongo="http://www.mulesoft.org/schema/mule/mongo" xmlns:jersey="http://www.mulesoft.org/schema/mule/jersey" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:jdbc="http://www.mulesoft.org/schema/mule/ee/jdbc" xmlns:jetty="http://www.mulesoft.org/schema/mule/jetty" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="EE-3.3.0" xsi:schemaLocation="
+<mule xmlns:data-mapper="http://www.mulesoft.org/schema/mule/ee/data-mapper" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:jdbc-ee="http://www.mulesoft.org/schema/mule/ee/jdbc" xmlns:context="http://www.springframework.org/schema/context" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:rest="http://www.mulesoft.org/schema/mule/rest" xmlns:debugger="http://www.mulesoft.org/schema/mule/debugger" xmlns:mongo="http://www.mulesoft.org/schema/mule/mongo" xmlns:jersey="http://www.mulesoft.org/schema/mule/jersey" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:jdbc="http://www.mulesoft.org/schema/mule/ee/jdbc" xmlns:jetty="http://www.mulesoft.org/schema/mule/jetty" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="EE-3.3.0" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd 
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
 http://www.mulesoft.org/schema/mule/rest http://www.mulesoft.org/schema/mule/rest/1.0/mule-rest.xsd 
+http://www.mulesoft.org/schema/mule/debugger http://www.mulesoft.org/schema/mule/debugger/current/mule-debugger.xsd 
 http://www.mulesoft.org/schema/mule/ee/jdbc http://www.mulesoft.org/schema/mule/ee/jdbc/current/mule-jdbc-ee.xsd 
+http://www.mulesoft.org/schema/mule/ee/data-mapper http://www.mulesoft.org/schema/mule/ee/data-mapper/current/mule-data-mapper.xsd 
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd 
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd 
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd 
-http://www.mulesoft.org/schema/mule/debugger http://www.mulesoft.org/schema/mule/debugger/current/mule-debugger.xsd 
 http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mongo/2.0/mule-mongo.xsd 
 http://www.mulesoft.org/schema/mule/jersey http://www.mulesoft.org/schema/mule/jersey/current/mule-jersey.xsd 
 http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd 
@@ -18,12 +19,14 @@ http://www.mulesoft.org/schema/mule/jetty http://www.mulesoft.org/schema/mule/je
      <jdbc-ee:mysql-data-source  name="MySQL_Data_Source" password="" user="root"  url="jdbc:mysql://172.16.20.35:3306/tcmanager" transactionIsolation="UNSPECIFIED" doc:name="MySQL Data Source"/>
     <jdbc-ee:connector name="Database__JDBC_" dataSource-ref="MySQL_Data_Source" validateConnections="true" queryTimeout="-1" pollingFrequency="0" doc:name="Database (JDBC)"/>
     <context:property-placeholder location="mule.properties"/>
+    <!-- <data-mapper:config name="mapper" transformationGraphPath="mapper.grf" doc:name="DataMapper"/> -->
+    
     <flow name="indexFlow" doc:name="indexFlow">
         <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="${http.port}" path="admin" doc:name="HTTP"/>
         <http:static-resource-handler resourceBase="${app.home}/docroot" defaultFile="index.html"></http:static-resource-handler>
     </flow>
     <flow name="DB-API" doc:name="DB-API">
-        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="${http.port}" doc:name="HTTP"/>
+        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="${http.port}" path="db" doc:name="HTTP"/>
         <rest:router xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" config-ref="Rest" templateUri="/db/{queryKey}/{params}" doc:name="Rest">
             <rest:get> 
                 <choice doc:name="Choice"> 
@@ -36,6 +39,7 @@ http://www.mulesoft.org/schema/mule/jetty http://www.mulesoft.org/schema/mule/je
                         <jdbc-ee:outbound-endpoint exchange-pattern="request-response" connector-ref="Database__JDBC_" queryKey="#[variable:queryKey]" doc:name="Database (JDBC)" queryTimeout="-1"> 
                             <jdbc-ee:query key="getProjects" value="select type, description, name, id from project"/>  
                             <jdbc-ee:query key="getLabels" value="select  L.* from labels L inner join project_label PL on L.id=PL.labelId where PL.projectId=#[variable:params]"/>  
+                            <jdbc-ee:query key="getVersions" value="select  V.* from version V inner join project_version PV on V.id=PV.versionId where PV.projectId=#[variable:params]"/>  
                             <jdbc-ee:query key="getSteps" value="select st.* from steps st inner join test_case_step tc_s on st.id= tc_s.stepId where tc_s.testId=#[variable:params]"/> 
                         </jdbc-ee:outbound-endpoint>  
                         <json:object-to-json-transformer doc:name="Object to JSON"/> 
@@ -46,12 +50,26 @@ http://www.mulesoft.org/schema/mule/jetty http://www.mulesoft.org/schema/mule/je
     </flow>
     <sub-flow name="TestCase_subflow" doc:name="TestCase_subflow">
         	<jdbc-ee:outbound-endpoint exchange-pattern="request-response" connector-ref="Database__JDBC_" queryKey="#[variable:queryKey]" doc:name="Database (JDBC)" queryTimeout="-1">
-            <jdbc-ee:query key="getTestCases" value="select TC.*, L.id 'labelId', L.label from test_case TC &#10;inner join label_test_case LTC on TC.id=LTC.testId&#10;inner join labels L on L.id = LTC.labelId&#10;inner join project_label PL on PL.labelid = L.id&#10;where PL.projectId=5&#10;&#10;order by TC.order"/>  
+            <jdbc-ee:query key="getTestCases" value="select  TC.*,  PTC.order, &#10;(select  L.id from labels L where LTC.labelid= L.id ) 'labelid',&#10;(select  L.label from labels L where LTC.labelid= L.id ) 'label',&#10;(select V.id from version V where V.id = VTC.versionId) 'versionid',&#10;(select V.version from version V where V.id = VTC.versionId) 'version'&#10;from test_case TC&#10;left join label_test_case LTC on TC.id = LTC.testId&#10;left join version_test_case VTC on TC.id = VTC.testId&#10;inner join project_test_case PTC on TC.id = PTC.testid&#10;where PTC.projectId = #[variable:params]&#10;order by PTC.order"/>  
                     
              </jdbc-ee:outbound-endpoint>
         <custom-transformer class="org.mule.definition.TestCaseTransformer" doc:name="Java"/>
-        <json:object-to-json-transformer doc:name="Object to JSON"/>
+       <json:object-to-json-transformer doc:name="Object to JSON" ignoreBadInput="true"/>
         
               
     </sub-flow>
+   
+    <!--     <flow name="testplanappFlow1" doc:name="testplanappFlow1">
+        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="${http.port}" doc:name="HTTP"/>
+        <data-mapper:transform config-ref="mapper" doc:name="DataMapper"/>
+        <debugger:breakpoint doc:name="Breakpoint"/>
+        <foreach doc:name="Foreach test">
+            <foreach doc:name="Foreach">
+                <jdbc-ee:outbound-endpoint exchange-pattern="request-response" queryKey="update" queryTimeout="-1" connector-ref="Database__JDBC_" doc:name="Database (JDBC)">
+                    <jdbc-ee:query key="update" value="update test_case set name='#[payload:name]', description='#[mpayload:description]'  where id = #[payload:id]"/>
+                </jdbc-ee:outbound-endpoint>
+            </foreach>
+        </foreach>
+    </flow>
+    -->
 </mule>

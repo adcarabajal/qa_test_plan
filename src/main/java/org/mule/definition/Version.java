@@ -3,20 +3,20 @@ package org.mule.definition;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 
 @JsonAutoDetect
-public class Label {
+public class Version {
 	private long id;
-	private String label;
+	private String version;
 	
-	public Label(long id, String label)	{
+	public Version(long id, String version)	{
 		this.id = id;
-		this.label = label;
+		this.version = version;
 	}
 	
 	public void setLabel(String label) {
-		this.label = label;
+		this.version = label;
 	}
 	public String getLabel() {
-		return label;
+		return version;
 	}
 	public void setId(long id) {
 		this.id = id;
