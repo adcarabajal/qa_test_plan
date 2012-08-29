@@ -426,7 +426,7 @@ height: 100%;
 background:#064A76;
 }
 .mainHeadBar{height:35px;background:#043452;border-bottom:1px solid #0B5F8A;}
-.panelContainer{height:750px;}
+.panelContainer{height:750px; width:1150px;margin-left:auto;margin-right:auto;margin-top:30px;}
 .tcContainer{
 width: 100%;
 height: 94.5%;
