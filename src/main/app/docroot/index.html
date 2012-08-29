@@ -15,107 +15,48 @@
 		<link rel="stylesheet" href="css/token-input-facebook.css" type="text/css" />
 		<script language="javascript" type="text/javascript"src="scripts/jqui/js/jquery-1.7.2.min.js"></script>
 		<script language="javascript" type="text/javascript"src="scripts/jqui/js/jquery-ui-1.8.22.custom.min.js"></script>
-		<script type="text/javascript" src="scripts/jquery.layout-latest.js"></script>
 		<script language="javascript" type="text/javascript"src="scripts/utils.js"></script>
 		<script language="javascript" type="text/javascript"src="scripts/jquery.tokeninput.js"></script>
-	<script type="text/javascript" src="scripts/complex.js"></script>
 		<script language="javascript" type="text/javascript"src="scripts/naitse.js"></script>
-		<script language="javascript" type="text/javascript"src="scripts/layout.js"></script>
 		<script language="javascript" type="text/javascript"src="scripts/liveBinds.js"></script>
+		<script language="javascript" type="text/javascript"src="scripts/labelsTest.js"></script>
 </head>
 <body>
-
-<div class="ui-layout-west">
-
-	<div class="header ui-widget-header">Projects</div>
-	<div class="subhead">
-	<input id="backButton" disabled="true" type="button" value="back" onclick="stepSortableControls.prevResults();"></input>
-		<input type="button" value="remove" onclick="stepSortable.delStep();"></input>
-		<input type="button" value="clone" onclick="stepSortable.cloneStep();"></input>
-		<input type="button" value="expandAll" onclick="stepSortableControls.expandAll();"></input>
-		<input type="button" value="collapseAll" onclick="stepSortableControls.collapseAll();"></input><br />
-		<input type="button" value="selectAll" onclick="stepSortableControls.selectAll();"></input>
-		<input type="button" value="unselectAll" onclick="stepSortableControls.unSelectAll();"></input>
-		<input class="autocompletable"/>
-	</div>
-
-	<div class="ui-widget-texture content">
-				<div class="column"></div>
-		
-	</div>
-<!--		<div class="subhead">-->
-<!--	<input type="button" value="load" onclick="stepSortable.loadFromDB();"></input>-->
-<!--	</div>-->
-<!---->
-<!--	<div class="ui-widget-texture content">-->
-<!--	</div>-->
-
-	<div class="footer">soon...</div>
-
-</div>
-
-<div class="ui-layout-east">
-
-	<div class="header ui-widget-header">Steps Manager</div>
-
-<!--	<div class="subhead">-->
-<!--		<input type="button" value="remove" onclick="stepSortable.delStep();"></input>-->
-<!--		<input type="button" value="clone" onclick="stepSortable.cloneStep();"></input>-->
-<!--		<input type="button" value="expandAll" onclick="stepSortableControls.expandAll();"></input>-->
-<!--		<input type="button" value="collapseAll" onclick="stepSortableControls.collapseAll();"></input><br />-->
-<!--		<input type="button" value="selectAll" onclick="stepSortableControls.selectAll();"></input>-->
-<!--		<input type="button" value="unselectAll" onclick="stepSortableControls.unSelectAll();"></input>-->
-<!--	</div>-->
-<!---->
-<!--	<div class="ui-widget-texture content">-->
-<!--				<div class="column"></div>-->
-<!--		-->
-<!--	</div>-->
-
-	<div class="footer">Shift + Click to select items</div>
-
-</div>
-
-
-<div class="ui-layout-north">
-	<div class="header ui-widget-header">Test Center</div>
-	<div class="ui-widget-texture content">
-		
-	</div>
-<!--	<ul class="toolbar">-->
-<!--		<li id="tbarToggleNorth" class="first"><span></span>Toggle NORTH</li>-->
-<!--		<li id="tbarOpenSouth"><span></span>Open SOUTH</li>-->
-<!--		<li id="tbarCloseSouth"><span></span>Close SOUTH</li>-->
-<!--		<li id="tbarPinWest"><span></span>Pin/Unpin WEST</li>-->
-<!--		<li id="tbarPinEast" class="last"><span></span>Pin/Unpin EAST</li>-->
-<!--	</ul>-->
-</div>
-
-
-<div class="ui-layout-south">
-	<div class="header ui-widget-header">Outer - South</div>
-	<div class="ui-widget-texture content">
-		<p>blabla</p>
-	</div>
-</div>
-
-
-<div id="mainContent">
-	<!-- DIVs for the INNER LAYOUT -->
-	<div class="ui-layout-center">
-		<h3 class="header ui-widget-header">Step Editor</h3>
-	<div class="subhead">
-	<input type="button" value="add" onclick="stepSortable.createStepFromUIValues();"></input>
-	</div>
-		<div class="ui-layout-content">
-						Title<input type="text" id="stepTitle"/>
-				Description<textarea id="stepText" class="ui-widget-content"></textarea>
+	<div class="mainHeadBar"></div>
+	<div class="panelContainer">
+		<div class="leftContainer borderCorner">
+			<div class="subhead ui-corner-tl ui-corner-tr">
+				<div class="ui-widget projectCombo">
+					<select id="combobox">
+						<option value="">Select one...</option>
+					</select>
+				</div>
+			</div>
+			<div class="tcContainer ui-corner-bl ui-corner-br">
+						<div class="column tcColumn"></div>
+			</div>
 		</div>
-		<div class="footer">para algo va a servir</div>
+		<div class="middleContainer borderCorner">
+			<div class="subhead ui-corner-tl ui-corner-tr">
+				botonitos aqui
+			</div>
+			<div class="stepContainer ui-corner-bl ui-corner-br">
+						<div class="column stepColumn"></div>
+			</div>
+		</div>
+		<div class="rightContainer borderCorner">
+			Title: <input type="text" id="stepTitle"/>
+			<div class="subhead ui-corner-tl ui-corner-tr">
+					Description
+			</div>
+				<textarea id="descriptionText" class=""></textarea>
+			<div class="subhead ui-corner-tl ui-corner-tr">
+					Expected Result
+			</div>
+				<textarea id="descriptionText" class=""></textarea>
+			</div>
+		</div>
 	</div>
-</div>
-
-
 </body>
 </html> 
 

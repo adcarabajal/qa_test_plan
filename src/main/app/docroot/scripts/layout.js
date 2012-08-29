@@ -20,9 +20,34 @@
 		outerLayout = $("body").layout( layoutSettings_Outer );
 		resizeCenterContainer()
 //		dbTCManager.loadData("getProject","firstCall");
-		ajaxEngine.requestHandler("getTestCases","5")
+		ajaxEngine.requestHandler("getProjects","5")
+		$( "#combobox" ).combobox()
+		$('span > .ui-combobox-input').autocomplete({
+			select:function(event,ui){
+				$( ".column" ).empty()
+				ajaxEngine.requestHandler("getTestCases",ui.item.option.value)
+				}
+		});
+		uiBinds()
 		
-
+		
+		$("#friends").click(function(){  
+                      
+		    //focus 'to' field  
+		    $("#to").focus();  
+		});  
+		                  
+		//add live handler for clicks on remove links  
+		$(".remove", document.getElementById("friends")).live("click", function(){  
+		                  
+		    //remove current friend  
+		    $(this).parent().remove();  
+		                      
+		    //correct 'to' field position  
+		    if($("#friends span").length === 0) {  
+		        $("#to").css("top", 0);  
+		    }                 
+		});  
 		
 		
 		
@@ -83,6 +108,7 @@
 			if (this.href.substr(this.href.length-1) == "#") this.href = path +"#";
 		});
 
+		
 	});
 
 
